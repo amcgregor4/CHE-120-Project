@@ -1,0 +1,38 @@
+import pygame
+
+pygame.init()
+screen_width = 1920
+screen_height = 1080
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Scrolling Background")
+background_img = pygame.image.load("g_background.png").convert()
+background_height = background_img.get_height()
+
+bg_y1 = 0
+# Position the second background image immediately after the first
+bg_y2 = background_height
+scroll_speed = 1  # Adjust for desired scrolling speed
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Update background positions
+    bg_y1 -= scroll_speed
+    bg_y2 -= scroll_speed
+
+    # Reset positions to create infinite loop
+    if bg_y1 <= -background_height:
+        bg_y1 = background_height
+    if bg_y2 <= -background_height:
+        bg_y2 = background_height
+
+    # Draw backgrounds
+    screen.blit(background_img, (0, bg_y1))
+    screen.blit(background_img, (0, bg_y2))
+
+    pygame.display.flip()  # Or pygame.display.update()
+
+pygame.quit()
