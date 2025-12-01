@@ -20,6 +20,11 @@ START_BUTTON_WIDTH, START_BUTTON_HEIGHT = 1706, 130
 
 OBSTACLE_OFFSET = 250
 
+#Values for background scrolling effect
+background1_y = 0
+background2_y = -HEIGHT
+background_vel = 1
+
 FONT = pygame.font.Font('Sprintura.otf', 50)
 SCORE_TEXT = FONT.render('SCORE:', True, (255,255,255))
 HIGH_SCORE_TEXT = FONT.render('High Score:', True, (255,255,255))
@@ -39,7 +44,8 @@ def draw_before_title(background, sine_sprites, high_score_value, high_score_tex
     pygame.display.update()
 
 def draw_after_title(background, player, obstacle_left, obstacle_right, scoring_line, score_text, score_value):
-    window.blit(background, (0,0))
+    window.blit(background, (0,background1_y))
+    window.blit(background, (0,background2_y))
     window.blit(player.image, player.rect)
     window.blit(scoring_line.image, scoring_line.rect)
     window.blit(obstacle_left.image, obstacle_left.rect)
@@ -51,9 +57,10 @@ def draw_after_title(background, player, obstacle_left, obstacle_right, scoring_
 
 def main():
 
+    global background1_y, background2_y, background_vel
+
     #Sprite Velocities
     OBSTACLE_VEL = 4
-    PLAYER_VEL = 200
 
     #Creating Sprites
     class PLAYER(pygame.sprite.Sprite):
@@ -190,12 +197,20 @@ def main():
         if in_game:
             elapsed_time = time.time() - start_time
             OBSTACLE_VEL = 4 +int((elapsed_time // 10))
-            PLAYER_VEL = 4 +int((elapsed_time // 10))
+            PLAYER_VEL = 6 +int((elapsed_time // 10))
         obstacle_right.update_obst()
         obstacle_left.update_obst()
         scoring_line.update_line()
         sine_sprites.update()
         
+        #Scrolling Background
+        background1_y += background_vel
+        background2_y += background_vel
+        if background1_y >= HEIGHT:
+            background1_y = -HEIGHT
+        if background2_y >= HEIGHT:
+            background2_y = -HEIGHT
+
         if in_game:
             if keys[pygame.K_a] and player.rect.x > 0 and in_game == True:
                 player.rect.x -= PLAYER_VEL
