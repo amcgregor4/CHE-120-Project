@@ -182,6 +182,7 @@ def main():
             elapsed_time = time.time() - start_time
             OBSTACLE_VEL = 4 +int((elapsed_time // 10))
             PLAYER_VEL = 6 +int((elapsed_time // 10))
+            background_vel = 1 +int((elapsed_time // 10))
         obstacle_right.update_obst()
         obstacle_left.update_obst()
         sine_sprites.update()
