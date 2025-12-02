@@ -43,11 +43,10 @@ def draw_before_title(background, sine_sprites, high_score_value, high_score_tex
     pygame.display.flip()
     pygame.display.update()
 
-def draw_after_title(background, player, obstacle_left, obstacle_right, scoring_line, score_text, score_value):
+def draw_after_title(background, player, obstacle_left, obstacle_right, score_text, score_value):
     window.blit(background, (0,background1_y))
     window.blit(background, (0,background2_y))
     window.blit(player.image, player.rect)
-    window.blit(scoring_line.image, scoring_line.rect)
     window.blit(obstacle_left.image, obstacle_left.rect)
     window.blit(obstacle_right.image, obstacle_right.rect)
     window.blit(score_text, (0,0))
@@ -136,19 +135,6 @@ def main():
             self.x_value += 0.1
             self.rect.y = 625 + 5 * math.sin(self.x_value)
 
-    class SCORING_LINE(pygame.sprite.Sprite):
-        def __init__(self):
-            super().__init__()
-            self.image = pygame.transform.scale(pygame.image.load('scoring_line.png').convert_alpha(),(WIDTH, 4))
-            self.rect =self.image.get_rect()
-            self.rect.y = -496 + OBSTACLE_HEIGHT / 2
-        def reset(self):
-            self.rect.y = -100
-        def update_line(self):
-            self.rect.y += OBSTACLE_VEL
-            if self.rect.y > HEIGHT:
-                self.reset()
-
     #Game status variables
     running = True
     in_game = False
@@ -157,8 +143,7 @@ def main():
     #Naming Sprites  
     player = PLAYER()
     obstacle_left = OBSTACLE_LEFT()
-    obstacle_right = OBSTACLE_RIGHT()
-    scoring_line = SCORING_LINE()    
+    obstacle_right = OBSTACLE_RIGHT()   
     start_button = START_BUTTON()
     title = TITLE()
     sine_sprites = pygame.sprite.Group(title, start_button)
@@ -192,7 +177,6 @@ def main():
         if dead:
             obstacle_right.rect.y = -491
             obstacle_left.rect.y = -500
-            scoring_line.rect.y = -496 + OBSTACLE_HEIGHT / 2
 
         if in_game:
             elapsed_time = time.time() - start_time
@@ -200,7 +184,6 @@ def main():
             PLAYER_VEL = 6 +int((elapsed_time // 10))
         obstacle_right.update_obst()
         obstacle_left.update_obst()
-        scoring_line.update_line()
         sine_sprites.update()
         
         #Scrolling Background
@@ -221,8 +204,8 @@ def main():
 
         #Collisions
         if not dead:
-            prev_line_y = scoring_line.rect.y - OBSTACLE_VEL
-            curr_line_y = scoring_line.rect.y
+            prev_line_y = obstacle_left.rect.y - OBSTACLE_VEL
+            curr_line_y = obstacle_left.rect.y
             if player.rect.colliderect(obstacle_left.rect) or player.rect.colliderect(obstacle_right.rect):
                 transparent_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
                 transparent_surface.fill((255, 0, 0, 60))
@@ -245,7 +228,7 @@ def main():
             player.rect.x = WIDTH / 2 - PLAYER_WIDTH / 2
             player.rect.y = 600
         if in_game == True:
-            draw_after_title(background, player, obstacle_left, obstacle_right, scoring_line, score_text, score_value)
+            draw_after_title(background, player, obstacle_left, obstacle_right, score_text, score_value)
         if in_game == False:
             draw_before_title(background, sine_sprites, high_score_value, high_score_text)
     pygame.quit()
